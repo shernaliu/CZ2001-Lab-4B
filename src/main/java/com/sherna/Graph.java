@@ -209,8 +209,51 @@ public class Graph {
         }
     }
 
-    void outputExcelFile(){
+    public void outputExcelFile() {
+        // Blank workbook
+        XSSFWorkbook workbook = new XSSFWorkbook();
 
+        // Create a blank sheet
+        XSSFSheet sheet = workbook.createSheet("CPU Computation Time");
+
+        int rownum = 0;
+        int cellnum = 0;
+        Row row = null;
+        Cell cell = null;
+
+        // write header
+        row = sheet.createRow(rownum++);
+        cell = row.createCell(cellnum++);
+        cell.setCellValue("Graph Size");
+        cell = row.createCell(cellnum++);
+        cell.setCellValue("No. of flights taken to reach destination");
+        cell = row.createCell(cellnum++);
+        cell.setCellValue("Average Execution time (ms)");
+
+//        // write no. of nodes for k=0 (degree of 0)
+//        cellnum = 0;
+//        row = sheet.createRow(rownum++);
+//        cell = row.createCell(cellnum++);
+//        cell.setCellValue(0);
+//        cell = row.createCell(cellnum++);
+//        cell.setCellValue(noOfNodes);
+//        // ln(0) is undefined
+//        cell = row.createCell(cellnum++);
+//        cell.setCellValue(Math.log(0)); // ln k
+//        cell = row.createCell(cellnum++);
+//        cell.setCellValue(Math.log(noOfNodes)); // ln P
+//        cell = row.createCell(cellnum++);
+//        cell.setCellValue(adjacencyMap.size()); // total no. of nodes
+//        noOfNodes = 0; // reset
+
+        try {
+            FileOutputStream out = new FileOutputStream(new File("data/output-" + this.fileName + ".xlsx"));
+            workbook.write(out);
+            out.close();
+            System.out.println("Done. Output file name is " + "data/output-" + this.fileName + ".xlsx");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

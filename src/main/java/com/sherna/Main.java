@@ -27,7 +27,7 @@ public class Main {
         }
 
         System.out.println("Initializing a graph with " + numOfCities + " cities, please wait...");
-        Graph g = new Graph.Reader("data/cities.txt").read("data/cities.txt", numOfCities);
+        Graph g = new Graph.Reader("data/cities.txt").read("cities", numOfCities);
         System.out.println("Initialization complete.");
         printMenu();
 
@@ -103,6 +103,7 @@ public class Main {
         System.out.println("(2) - Print graph (short)");
         System.out.println("(3) - Print graph (long)");
         System.out.println("(4) - Find a route between 2 cities with minimum no. of stops");
+        System.out.println("(5) - Output Excel File");
         System.out.println("(0) - Exit");
         System.out.println("==================================");
     }
