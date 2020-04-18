@@ -1,0 +1,100 @@
+Singapore
+Kuala Lumpur
+Ipoh
+Johor Bahru
+Jakarta
+Bangkok
+Chiang Mai
+Krabi
+Phuket
+Ko Samui
+Da Nang
+Hanoi
+Ho Chi Minh City
+Brunei
+Phnom Penh
+Siem Reap
+Hong Kong
+Macau
+Manila
+Beijing
+Chongqing
+Guangzhou
+Hangzhou
+Nanjing
+Shenzhen
+Wuhan
+Osaka
+Tokyo
+Sapporo
+Seoul
+Busan
+Daegu
+Jeju
+Incheon
+Pyongyang
+Taipei
+Chittagong
+Dhaka
+Bhutan
+Chennai
+Bangalore
+Bhopal
+Delhi
+Kolkata
+Mumbai
+Sydney
+Perth
+Bahrain
+Tel Aviv
+Kuwait City
+New Zealand
+Washington D.C.
+New York
+Los Angeles
+Chicago
+Mongolia
+Texas
+Seattle
+Boston
+London
+Amsterdam
+Luxembourg City
+Berlin
+Copenhagen
+Moscow
+Luxembourg
+Paris
+Nice
+Cork
+Dublin
+Rome
+Vienna
+Madrid
+Stockholm
+Vatican City
+Toronto
+Shanghai
+Cairo
+Istanbul
+Dubai
+Macau
+Las Vegas
+Prague
+Barcelona
+Venice
+Munich
+Zurich
+Chiang Mai
+Vancouver
+Melbourne
+Rio De Janeiro
+Frankfurt
+Miami
+Dallas
+Houston
+Budapest
+Athens
+Santorini
+Florence
+Milan
