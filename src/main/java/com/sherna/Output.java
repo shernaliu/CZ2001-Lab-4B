@@ -55,13 +55,15 @@ public class Output {
         int destIndex = 0;
         Random rand = new Random();
 
+        // compute average computation time for graph size = 10, 20, 30, ..., 100
         for (int i = 10; i <= 100; i += 10) {
             // init a graph of i cities
             graph = new Graph.Reader("data/cities.txt").read("cities", i);
             // reset record
             duration_record_1_flight = new ArrayList<>();
             duration_record_2_flights = new ArrayList<>();
-            // record 100 times
+
+            // as long as both record's size is not 5, repeat
             while (duration_record_1_flight.size() < 5 || duration_record_2_flights.size() < 5) {
                 // generate random number=[0,10]
                 srcIndex = rand.nextInt(10);
@@ -72,17 +74,38 @@ public class Output {
                     destIndex = rand.nextInt(11);
                 }
 
-                start_time = System.nanoTime();
+                // call BFS to see if noOfFlightsTaken is 1
                 graph.BFS(srcIndex, destIndex, false);
-                end_time = System.nanoTime();
-                time_duration = (end_time - start_time) / 1000000.0;
-
                 noFlightsTaken = graph.getNumFlightsTaken() - 1;
-                // do this for no. of flights = 1
-                if (noFlightsTaken == 1 && duration_record_1_flight.size() < 5) {
-                    duration_record_1_flight.add(time_duration);
-                } else if (noFlightsTaken == 2 && duration_record_2_flights.size() < 5) {
-                    duration_record_2_flights.add(time_duration);
+
+                if (noFlightsTaken == 1) {
+                    // record 5 times
+                    while (duration_record_1_flight.size() < 5) {
+                        start_time = System.nanoTime();
+                        graph.BFS(srcIndex, destIndex, false);
+                        end_time = System.nanoTime();
+                        time_duration = (end_time - start_time) / 1000000.0;
+
+                        // do this for no. of flights = 1
+                        if (duration_record_1_flight.size() < 5) {
+                            duration_record_1_flight.add(time_duration);
+                        }
+                    }
+                } else if (noFlightsTaken == 2) {
+                    // record 5 times
+                    while (duration_record_2_flights.size() < 5) {
+                        start_time = System.nanoTime();
+                        graph.BFS(srcIndex, destIndex, false);
+                        end_time = System.nanoTime();
+                        time_duration = (end_time - start_time) / 1000000.0;
+
+                        // do this for no. of flights = 2
+                        if (duration_record_2_flights.size() < 5) {
+                            duration_record_2_flights.add(time_duration);
+                        }
+                    }
+                } else {
+
                 }
             }
 
@@ -90,18 +113,15 @@ public class Output {
             average_1_flight = computeAverage(duration_record_1_flight);
             average_2_flights = computeAverage(duration_record_2_flights);
 
-            // output to CSV, k is noOfFlights=[1,2]
-            for (int k = 1; k <= 2; k++) {
-                cellnum = 0;
-                row = sheet.createRow(rownum++);
-                cell = row.createCell(cellnum++);
-                cell.setCellValue(i); // graph size
-                cell = row.createCell(cellnum++);
-                cell.setCellValue(average_1_flight);
-                cell = row.createCell(cellnum++);
-                cell.setCellValue(average_2_flights);
-
-            }
+            // output to CSV
+            cellnum = 0;
+            row = sheet.createRow(rownum++);
+            cell = row.createCell(cellnum++);
+            cell.setCellValue(i); // graph size
+            cell = row.createCell(cellnum++);
+            cell.setCellValue(average_1_flight);
+            cell = row.createCell(cellnum++);
+            cell.setCellValue(average_2_flights);
         }
         try {
             FileOutputStream out = new FileOutputStream(new File("data/output-" + graph.getFileName() + ".xlsx"));
