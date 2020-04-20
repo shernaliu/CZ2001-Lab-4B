@@ -196,21 +196,19 @@ public class Graph {
      * @param destCity destination city
      */
     public void BFS(int srcCity, int destCity, boolean printResult) {
-        boolean isShortestPath = false; // set to true if a shortest path is found
-        boolean visitedCities[] = new boolean[numOfCities]; // all visited cities are initially set to false as its not visited yet
+        boolean isShortestPath = false;
+        boolean visitedCities[] = new boolean[numOfCities];
         LinkedList<Integer> queue = new LinkedList<Integer>();
-        Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>(); // trace a shortest path to the source. <adjVertex, currentCity>
-        visitedCities[srcCity] = true; // visit & mark srcCity as true and add to the queue
+        Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>();
+        visitedCities[srcCity] = true;
         queue.add(srcCity);
-        int currentCity = srcCity; // used to iterate thru while loop
-        // loop thru the queue, if currentCity is the destination, then a shortest path is found & break out of loop
+        int currentCity = srcCity;
         while (queue.size() != 0) {
             if (currentCity == destCity) {
                 isShortestPath = true;
                 break;
             }
-            currentCity = queue.poll(); // returns & remove the city at the front of the queue (dequeue)
-            // iterate thru the adjacent cities of the dequeued currentCity, if an adjCity is not visited yet, then mark visit and enqueue
+            currentCity = queue.poll();
             Iterator<Integer> iter = vertexList[currentCity].listIterator();
             while (iter.hasNext()) {
                 Integer adjCity = iter.next();
@@ -226,7 +224,6 @@ public class Graph {
                 }
             }
         }
-        // if a shortest path is found, trace the path and count the number of flights taken
         if (isShortestPath) {
             ArrayList<Integer> pathToTrace = new ArrayList<Integer>();
             Integer cityToTrace = currentCity;
