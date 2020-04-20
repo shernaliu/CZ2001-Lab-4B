@@ -141,56 +141,40 @@ public class Graph {
     }
 
     public void BFS(int srcCity, int destCity) {
-        // Flag to be set when a shortest path to destination is found
-        boolean shortestPathFound = false;
-
-        // By default, all vertices start off as not visited (i.e. false)
-        boolean visitedCities[] = new boolean[numOfCities];
-
-        // Queue for BFS Algorithm
+        boolean isShortestPath = false; // set to true if a shortest path is found
+        boolean visitedCities[] = new boolean[numOfCities]; // all visited cities are initially set to false as its not visited yet
         LinkedList<Integer> queue = new LinkedList<Integer>();
-
-        // Maps every new adjVertex to the one that was visited before it
-        // Using this, we can trace back a path (shortest path) to the source
-        // In this map: key is adjVertex (after) while currentVertex (before) is the value (see below)
-        Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>();
-
-        // Visit srcCity, mark it in visitedCities as true, then add it to queue
-        visitedCities[srcCity] = true;
+        Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>(); // trace a shortest path to the source. <adjVertex, currentCity>
+        visitedCities[srcCity] = true; // visit & mark srcCity as true and add to the queue
         queue.add(srcCity);
-
-        // currentVertex is used to iterate through the while loop below
-        int currentVertex = srcCity;
-
+        int currentCity = srcCity; // used to iterate thru while loop
+        // loop thru the queue, if currentCity is the destination, then a shortest path is found & break out of loop
         while (queue.size() != 0) {
-            if (currentVertex == destCity) {
-                shortestPathFound = true;
+            if (currentCity == destCity) {
+                isShortestPath = true;
                 break;
             }
-
-            currentVertex = queue.poll();
-
-            // For all adjacent vertices (adjVertex) of the dequeued currentVertex:
-            // If an adjVertex has not been visited, then mark it as visited and queue it
-            Iterator<Integer> iter = vertexList[currentVertex].listIterator();
+            currentCity = queue.poll(); // returns & remove the city at the front of the queue (dequeue)
+            // iterate thru the adjacent cities of the dequeued currentCity, if an adjCity is not visited yet, then mark visit and enqueue
+            Iterator<Integer> iter = vertexList[currentCity].listIterator();
             while (iter.hasNext()) {
-                Integer adjVertex = iter.next();
-                if (visitedCities[adjVertex] == false) {
-                    visitedCities[adjVertex] = true;
-                    queue.add(adjVertex);
-                    previousCities.put(adjVertex, currentVertex);
-                    if (adjVertex == destCity) {
-                        currentVertex = adjVertex;
-                        shortestPathFound = true;
+                Integer adjCity = iter.next();
+                if (visitedCities[adjCity] == false) {
+                    visitedCities[adjCity] = true;
+                    queue.add(adjCity);
+                    previousCities.put(adjCity, currentCity);
+                    if (adjCity == destCity) {
+                        currentCity = adjCity;
+                        isShortestPath = true;
                         break;
                     }
                 }
             }
         }
-
-        if (shortestPathFound) {
+        // if a shortest path is found, trace the path and count the number of flights taken
+        if (isShortestPath) {
             ArrayList<Integer> pathToTrace = new ArrayList<Integer>();
-            Integer cityToTrace = currentVertex;
+            Integer cityToTrace = currentCity;
             while (cityToTrace != null) {
                 pathToTrace.add(cityToTrace);
                 cityToTrace = previousCities.get(cityToTrace);
@@ -202,10 +186,6 @@ public class Graph {
                 System.out.format("%2d : %s\n", cityIndex, cityList.get(cityIndex));
                 numFlightsTaken++;
             }
-
-        } else {
-
-            System.out.println("Path not found");
         }
     }
 
@@ -216,56 +196,40 @@ public class Graph {
      * @param destCity destination city
      */
     public void BFS(int srcCity, int destCity, boolean printResult) {
-        // Flag to be set when a shortest path to destination is found
-        boolean shortestPathFound = false;
-
-        // By default, all vertices start off as not visited (i.e. false)
-        boolean visitedCities[] = new boolean[numOfCities];
-
-        // Queue for BFS Algorithm
+        boolean isShortestPath = false; // set to true if a shortest path is found
+        boolean visitedCities[] = new boolean[numOfCities]; // all visited cities are initially set to false as its not visited yet
         LinkedList<Integer> queue = new LinkedList<Integer>();
-
-        // Maps every new adjVertex to the one that was visited before it
-        // Using this, we can trace back a path (shortest path) to the source
-        // In this map: key is adjVertex (after) while currentVertex (before) is the value (see below)
-        Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>();
-
-        // Visit srcCity, mark it in visitedCities as true, then add it to queue
-        visitedCities[srcCity] = true;
+        Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>(); // trace a shortest path to the source. <adjVertex, currentCity>
+        visitedCities[srcCity] = true; // visit & mark srcCity as true and add to the queue
         queue.add(srcCity);
-
-        // currentVertex is used to iterate through the while loop below
-        int currentVertex = srcCity;
-
+        int currentCity = srcCity; // used to iterate thru while loop
+        // loop thru the queue, if currentCity is the destination, then a shortest path is found & break out of loop
         while (queue.size() != 0) {
-            if (currentVertex == destCity) {
-                shortestPathFound = true;
+            if (currentCity == destCity) {
+                isShortestPath = true;
                 break;
             }
-
-            currentVertex = queue.poll();
-
-            // For all adjacent vertices (adjVertex) of the dequeued currentVertex:
-            // If an adjVertex has not been visited, then mark it as visited and queue it
-            Iterator<Integer> iter = vertexList[currentVertex].listIterator();
+            currentCity = queue.poll(); // returns & remove the city at the front of the queue (dequeue)
+            // iterate thru the adjacent cities of the dequeued currentCity, if an adjCity is not visited yet, then mark visit and enqueue
+            Iterator<Integer> iter = vertexList[currentCity].listIterator();
             while (iter.hasNext()) {
-                Integer adjVertex = iter.next();
-                if (visitedCities[adjVertex] == false) {
-                    visitedCities[adjVertex] = true;
-                    queue.add(adjVertex);
-                    previousCities.put(adjVertex, currentVertex);
-                    if (adjVertex == destCity) {
-                        currentVertex = adjVertex;
-                        shortestPathFound = true;
+                Integer adjCity = iter.next();
+                if (visitedCities[adjCity] == false) {
+                    visitedCities[adjCity] = true;
+                    queue.add(adjCity);
+                    previousCities.put(adjCity, currentCity);
+                    if (adjCity == destCity) {
+                        currentCity = adjCity;
+                        isShortestPath = true;
                         break;
                     }
                 }
             }
         }
-
-        if (shortestPathFound) {
+        // if a shortest path is found, trace the path and count the number of flights taken
+        if (isShortestPath) {
             ArrayList<Integer> pathToTrace = new ArrayList<Integer>();
-            Integer cityToTrace = currentVertex;
+            Integer cityToTrace = currentCity;
             while (cityToTrace != null) {
                 pathToTrace.add(cityToTrace);
                 cityToTrace = previousCities.get(cityToTrace);
@@ -275,7 +239,6 @@ public class Graph {
             for (Integer cityIndex : pathToTrace) {
                 numFlightsTaken++;
             }
-        } else {
         }
     }
 
