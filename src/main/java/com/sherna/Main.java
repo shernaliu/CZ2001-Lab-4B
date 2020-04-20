@@ -1,5 +1,15 @@
 package com.sherna;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 /*
@@ -20,7 +30,7 @@ public class Main {
         System.out.print("Enter the number of cities (min 2, max 100): ");
         numOfCities = sc.nextInt();
 
-        while(numOfCities <= 1 || numOfCities > 100){
+        while (numOfCities <= 1 || numOfCities > 100) {
             System.out.println("Invalid input.");
             System.out.print("Enter the number of cities (min 1, max 100): ");
             numOfCities = sc.nextInt();
@@ -83,7 +93,8 @@ public class Main {
                     break;
                 case 5:
                     System.out.println("(5) - Output Excel File");
-                    g.outputExcelFile();
+                    Output output = new Output();
+                    output.outputExcelFile();
                     break;
                 default:
                     System.out.println("Invalid input.");

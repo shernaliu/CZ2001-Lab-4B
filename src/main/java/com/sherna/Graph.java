@@ -37,6 +37,10 @@ public class Graph {
         initGraph();
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
     /**
      * Initialize the adjacency matrix of the graph.
      */
@@ -136,12 +140,6 @@ public class Graph {
         }
     }
 
-    /**
-     * Breadth First Search algorithm method
-     *
-     * @param srcCity  source city
-     * @param destCity destination city
-     */
     public void BFS(int srcCity, int destCity) {
         // Flag to be set when a shortest path to destination is found
         boolean shortestPathFound = false;
@@ -204,55 +202,80 @@ public class Graph {
                 System.out.format("%2d : %s\n", cityIndex, cityList.get(cityIndex));
                 numFlightsTaken++;
             }
+
         } else {
+
             System.out.println("Path not found");
         }
     }
 
-    public void outputExcelFile() {
-        // Blank workbook
-        XSSFWorkbook workbook = new XSSFWorkbook();
+    /**
+     * Breadth First Search algorithm method
+     *
+     * @param srcCity  source city
+     * @param destCity destination city
+     */
+    public void BFS(int srcCity, int destCity, boolean printResult) {
+        // Flag to be set when a shortest path to destination is found
+        boolean shortestPathFound = false;
 
-        // Create a blank sheet
-        XSSFSheet sheet = workbook.createSheet("CPU Computation Time");
+        // By default, all vertices start off as not visited (i.e. false)
+        boolean visitedCities[] = new boolean[numOfCities];
 
-        int rownum = 0;
-        int cellnum = 0;
-        Row row = null;
-        Cell cell = null;
+        // Queue for BFS Algorithm
+        LinkedList<Integer> queue = new LinkedList<Integer>();
 
-        // write header
-        row = sheet.createRow(rownum++);
-        cell = row.createCell(cellnum++);
-        cell.setCellValue("Graph Size");
-        cell = row.createCell(cellnum++);
-        cell.setCellValue("No. of flights taken to reach destination");
-        cell = row.createCell(cellnum++);
-        cell.setCellValue("Average Execution time (ms)");
+        // Maps every new adjVertex to the one that was visited before it
+        // Using this, we can trace back a path (shortest path) to the source
+        // In this map: key is adjVertex (after) while currentVertex (before) is the value (see below)
+        Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>();
 
-//        // write no. of nodes for k=0 (degree of 0)
-//        cellnum = 0;
-//        row = sheet.createRow(rownum++);
-//        cell = row.createCell(cellnum++);
-//        cell.setCellValue(0);
-//        cell = row.createCell(cellnum++);
-//        cell.setCellValue(noOfNodes);
-//        // ln(0) is undefined
-//        cell = row.createCell(cellnum++);
-//        cell.setCellValue(Math.log(0)); // ln k
-//        cell = row.createCell(cellnum++);
-//        cell.setCellValue(Math.log(noOfNodes)); // ln P
-//        cell = row.createCell(cellnum++);
-//        cell.setCellValue(adjacencyMap.size()); // total no. of nodes
-//        noOfNodes = 0; // reset
+        // Visit srcCity, mark it in visitedCities as true, then add it to queue
+        visitedCities[srcCity] = true;
+        queue.add(srcCity);
 
-        try {
-            FileOutputStream out = new FileOutputStream(new File("data/output-" + this.fileName + ".xlsx"));
-            workbook.write(out);
-            out.close();
-            System.out.println("Done. Output file name is " + "data/output-" + this.fileName + ".xlsx");
-        } catch (Exception e) {
-            e.printStackTrace();
+        // currentVertex is used to iterate through the while loop below
+        int currentVertex = srcCity;
+
+        while (queue.size() != 0) {
+            if (currentVertex == destCity) {
+                shortestPathFound = true;
+                break;
+            }
+
+            currentVertex = queue.poll();
+
+            // For all adjacent vertices (adjVertex) of the dequeued currentVertex:
+            // If an adjVertex has not been visited, then mark it as visited and queue it
+            Iterator<Integer> iter = vertexList[currentVertex].listIterator();
+            while (iter.hasNext()) {
+                Integer adjVertex = iter.next();
+                if (visitedCities[adjVertex] == false) {
+                    visitedCities[adjVertex] = true;
+                    queue.add(adjVertex);
+                    previousCities.put(adjVertex, currentVertex);
+                    if (adjVertex == destCity) {
+                        currentVertex = adjVertex;
+                        shortestPathFound = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (shortestPathFound) {
+            ArrayList<Integer> pathToTrace = new ArrayList<Integer>();
+            Integer cityToTrace = currentVertex;
+            while (cityToTrace != null) {
+                pathToTrace.add(cityToTrace);
+                cityToTrace = previousCities.get(cityToTrace);
+            }
+            Collections.reverse(pathToTrace);
+            numFlightsTaken = 0;
+            for (Integer cityIndex : pathToTrace) {
+                numFlightsTaken++;
+            }
+        } else {
         }
     }
 
