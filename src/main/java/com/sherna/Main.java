@@ -1,15 +1,5 @@
 package com.sherna;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 
 /*
@@ -23,21 +13,38 @@ public class Main {
         double start_time = 0;
         double end_time = 0;
         double time_duration = 0;
-        int numOfCities = 2; // accepted range=[2,50]
+        int numOfCities = 3; // accepted range=[3,100]
+        int numOfFlights = 1;
         int src, dest;
+        int maxNumEdges = 0;
 
         // get user input on the size of the graph
-        System.out.print("Enter the number of cities (min 2, max 100): ");
+        System.out.print("Enter the number of cities (min 3, max 100): ");
         numOfCities = sc.nextInt();
 
-        while (numOfCities <= 1 || numOfCities > 100) {
+        // check if valid numOfCities
+        while (numOfCities < 3 || numOfCities > 100) {
             System.out.println("Invalid input.");
-            System.out.print("Enter the number of cities (min 1, max 100): ");
+            System.out.print("Enter the number of cities (min 3, max 100): ");
             numOfCities = sc.nextInt();
         }
 
-        System.out.println("Initializing a graph with " + numOfCities + " cities, please wait...");
-        Graph g = new Graph.Reader("data/cities.txt").read("cities", numOfCities);
+        // calculate max. number of edges allowed for user selected numOfCities aka (n^2-n)/2
+        maxNumEdges = (int) (Math.pow(numOfCities, 2) - numOfCities) / 2;
+
+        // get user input on the desired number of edges/flights in the graph
+        System.out.print("Enter the number of flights (min 1, max " + maxNumEdges + "): ");
+        numOfFlights = sc.nextInt();
+
+        // check if valid numOfFlights
+        while (numOfFlights < 1 || numOfFlights > maxNumEdges) {
+            System.out.println("Invalid input.");
+            System.out.print("Enter the number of flights (min 1, max " + maxNumEdges + "): ");
+            numOfFlights = sc.nextInt();
+        }
+
+        System.out.println("Initializing a graph with " + numOfCities + " cities and " + numOfFlights + " flights, please wait...");
+        Graph g = new Graph.Reader("data/cities.txt").read("cities", numOfCities, numOfFlights);
         System.out.println("Initialization complete.");
         printMenu();
 
@@ -61,17 +68,16 @@ public class Main {
                     break;
                 case 4:
                     System.out.println("(4) - Find flight route between 2 cities");
-                    System.out.print("Enter the source city (-1 to quit): ");
+                    System.out.print("Enter the source city (Enter -1 to exit): ");
                     src = sc.nextInt();
-                    sc.nextLine(); // Consume \n
+                    sc.nextLine();
                     if (src == -1) {
                         break;
                     } else if (src > numOfCities - 1) {
-                        System.out.println("Input not valid. Outside of valid range.");
-                        System.out.println("=================================================================");
+                        System.out.println("Invalid input. ");
                         continue;
                     }
-                    System.out.print("Enter the destination city (type -1 to quit): ");
+                    System.out.print("Enter the destination city (Enter -1 to exit): ");
                     dest = sc.nextInt();
                     if (dest == -1) {
                         break;

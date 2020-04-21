@@ -57,8 +57,8 @@ public class Output {
 
         // compute average computation time for graph size = 10, 20, 30, ..., 100
         for (int i = 10; i <= 100; i += 10) {
-            // init a graph of i cities
-            graph = new Graph.Reader("data/cities.txt").read("cities", i);
+            // init a graph of n cities
+            graph = new Graph.Reader("data/cities.txt").read("cities", i, 2);
             // reset record
             duration_record_1_flight = new ArrayList<>();
             duration_record_2_flights = new ArrayList<>();

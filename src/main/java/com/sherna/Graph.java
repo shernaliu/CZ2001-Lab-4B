@@ -3,10 +3,6 @@ package com.sherna;
 import java.io.*;
 import java.util.*;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.*;
-
 /*
  * @author sherna
  * @created 18/04/2020
@@ -14,45 +10,66 @@ import org.apache.poi.xssf.usermodel.*;
  */
 public class Graph {
     private String fileName;
-    private int numOfCities;
-    private List<String> cityList;
+    private int n; // number of nodes/cities
+    private int e; // number of edges/fights
+    private List<String> cityList; // list of available nodes/cities
     private ArrayList<Integer>[] vertexList;
     private int numFlightsTaken = 0;
 
     /**
      * Constructor
      *
-     * @param fileName    name of the text file it is reading from
-     * @param numOfCities number of cities specified in the text file
+     * @param fileName   name of the text file it reads from
+     * @param numOfNodes number of nodes/cities
+     * @param numOfEdges number of edges/flights
      */
-    public Graph(String fileName, int numOfCities) {
+    public Graph(String fileName, int numOfNodes, int numOfEdges) {
         this.fileName = fileName;
-        this.numOfCities = numOfCities;
+        this.n = numOfNodes;
+        this.e = numOfEdges;
         this.cityList = new ArrayList<>();
-        // init vertexList with new arrays
-        vertexList = new ArrayList[numOfCities];
-        for (int i = 0; i < this.numOfCities; i++) {
+        vertexList = new ArrayList[numOfNodes];
+        for (int i = 0; i < this.n; i++) {
             vertexList[i] = new ArrayList<Integer>();
         }
-        initGraph();
+        initGraph(numOfEdges);
     }
 
+    /**
+     * Gets the name of the text file it read from
+     *
+     * @return fileName
+     */
     public String getFileName() {
         return fileName;
     }
 
     /**
-     * Initialize the adjacency matrix of the graph.
+     * Gets the number of flights taken.
+     *
+     * @return number of flights taken
      */
-    public void initGraph() {
-        // Edges are represented in matrix form (i.e. matrix[a][b] where a and b are cities)
-        // This is where we insert each of these edges into the Graph
-        int[][] matrixOfEdges = initAdjacencyMatrix();
-        int a, b;
-        for (a = 0; a < numOfCities; a++) {
-            for (b = 0; b < numOfCities; b++) {
-                if (matrixOfEdges[a][b] == 1) {
-                    addEdge(a, b);
+    public int getNumFlightsTaken() {
+        return this.numFlightsTaken;
+    }
+
+
+    /**
+     * Initialize the graph with the desired number of edges/flights.
+     * The edges/flights are represented using Adjacency Matrix.
+     * If city a has a flight to city b, then M[a][b] == 1.
+     * If city c does not a flight to city e, then M[c][d] == 0.
+     * If M[i][j] is 1, then add the edge.
+     *
+     * @param numOfEdges number of edges/flights
+     */
+    public void initGraph(int numOfEdges) {
+        int[][] M = initAdjacencyMatrix(numOfEdges);
+        int i, j;
+        for (i = 0; i < n; i++) {
+            for (j = 0; j < n; j++) {
+                if (M[i][j] == 1) {
+                    addEdge(i, j);
                 } else {
                     continue;
                 }
@@ -60,35 +77,58 @@ public class Graph {
         }
     }
 
-    public int[][] initAdjacencyMatrix() {
-        int[][] adjacencyMatrix = new int[numOfCities][numOfCities];
+    /**
+     * Initialize the adjacency matrix of size n x n with the desired number of edges/flights.
+     *
+     * @param desiredNumEdges
+     * @return
+     */
+    public int[][] initAdjacencyMatrix(int desiredNumEdges) {
+        // initialize a matrix of size n x n; all cells are set to 0
+        int[][] M = new int[n][n];
+        int edges_counter = 0; // counter to keep track the number of edges
         Random rand = new Random();
-        int a, b;
+        int i, j;
 
-        /* This generates a random noOfVertices x noOfVertices matrix filled with 0 or 1
-         * 0 = edge is absent (there is no flight connecting the two cities)
-         * 1 = edge is present (there is a flight connecting the two cities)
-         */
-        for (a = 0; a < numOfCities; a++) {
-            for (b = 0; b < numOfCities; b++) {
-                adjacencyMatrix[a][b] = rand.nextInt(2);
+        // Repeatedly populate the cells in lower triangle with 1 randomly until we have the desired number of edges
+        while (edges_counter != desiredNumEdges) {
+            // generate random number i = j = [0, n-1] (e.g. if n=3, it should generate a number within [0,2])
+            i = rand.nextInt(n); // The nextInt(int n) returns a random number between 0(inclusive) and and n (exclusive).
+            j = rand.nextInt(n);
+
+            // Focus on the cells on the lower triangle
+            if (i > j) {
+                // if cell M[i][j] is 0, assign 1 & increment edges_counter
+                if (M[i][j] == 0) {
+                    M[i][j] = 1;
+                    edges_counter += 1;
+                }
             }
         }
 
-        /*
-         * The graph we are simulating is an undirected graph, hence we take one half of the matrix and reflect that
-         * half across the diagonal to get a matrix that is symmetrical with respect to the main diagonal. In this
-         * graph, it also does not make sense to have a self-edge (i.e. an edge from one node back to itself) and hence
-         * all [a][a] vertices in the matrix are by default set to 0.
-         *
-         * */
-        for (a = 0; a < numOfCities; a++) {
-            for (b = 0; b < a; b++) {
-                adjacencyMatrix[b][a] = adjacencyMatrix[a][b]; // Reflect matrix w.r.t. main diagonal
+        // Matrix is symmetric; reflect M[i][j] to M[j][i]
+        for (i = 0; i < n; i++) {
+            for (j = 0; i > j; j++) {
+                M[j][i] = M[i][j];
             }
-            adjacencyMatrix[a][a] = 0; // No self-edges
         }
-        return adjacencyMatrix;
+        printMatrix(M); // debug
+        return M;
+    }
+
+    /**
+     * Prints a visual representation of the matrix
+     * @param M the matrix you wish to print
+     */
+    public void printMatrix(int[][] M){
+        int i,j;
+        System.out.println("The matrix structure: ");
+        for (i = 0; i < n; i++) {
+            for (j = 0; j < n; j++) {
+                System.out.format("[%d]", M[i][j]);
+            }
+            System.out.println();
+        }
     }
 
     /**
@@ -102,20 +142,11 @@ public class Graph {
     }
 
     /**
-     * Gets the number of flights taken.
-     *
-     * @return number of flights taken
-     */
-    public int getNumFlightsTaken() {
-        return this.numFlightsTaken;
-    }
-
-    /**
      * Prints the list of all cities.
      */
     public void printCities() {
         System.out.println("Index\tCity");
-        for (int i = 0; i < numOfCities; i++) {
+        for (int i = 0; i < n; i++) {
             System.out.format("[%2d]\t%s\n", i, cityList.get(i));
         }
     }
@@ -142,7 +173,7 @@ public class Graph {
 
     public void BFS(int srcCity, int destCity) {
         boolean isShortestPath = false; // set to true if a shortest path is found
-        boolean visitedCities[] = new boolean[numOfCities]; // all visited cities are initially set to false as its not visited yet
+        boolean visitedCities[] = new boolean[n]; // all visited cities are initially set to false as its not visited yet
         LinkedList<Integer> queue = new LinkedList<Integer>();
         Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>(); // trace a shortest path to the source. <adjVertex, currentCity>
         visitedCities[srcCity] = true; // visit & mark srcCity as true and add to the queue
@@ -197,7 +228,7 @@ public class Graph {
      */
     public void BFS(int srcCity, int destCity, boolean printResult) {
         boolean isShortestPath = false;
-        boolean visitedCities[] = new boolean[numOfCities];
+        boolean visitedCities[] = new boolean[n];
         LinkedList<Integer> queue = new LinkedList<Integer>();
         Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>();
         visitedCities[srcCity] = true;
@@ -251,22 +282,37 @@ public class Graph {
             this.txtFileName = txtFileName;
         }
 
-        Graph read(String fileName, int noOfCities) {
+        Graph read(String fileName, int noOfCities, int noOfEdges) {
             Graph g = null;
             try {
-                g = scanGraph(fileName, noOfCities);
+                g = scanGraph(fileName, noOfCities, noOfEdges);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return g;
         }
 
-        Graph scanGraph(String fileName, int noOfCities) throws FileNotFoundException {
+//        Graph scanGraph(String fileName, int noOfCities) throws FileNotFoundException {
+//            String line = null;
+//            graph = new Graph(fileName, noOfCities);
+//            Scanner sc = new Scanner(new File(txtFileName));
+//            while (sc.hasNextLine()) {
+//                if (count == noOfCities) {
+//                    break;
+//                }
+//                line = sc.nextLine();
+//                graph.cityList.add(line);
+//                count++;
+//            }
+//            return graph;
+//        }
+
+        Graph scanGraph(String fileName, int noOfNodes, int noOfEdges) throws FileNotFoundException {
             String line = null;
-            graph = new Graph(fileName, noOfCities);
+            graph = new Graph(fileName, noOfNodes, noOfEdges);
             Scanner sc = new Scanner(new File(txtFileName));
             while (sc.hasNextLine()) {
-                if (count == noOfCities) {
+                if (count == noOfNodes) {
                     break;
                 }
                 line = sc.nextLine();
