@@ -100,7 +100,12 @@ public class Main {
                 case 5:
                     System.out.println("(5) - Output Excel File");
                     Output output = new Output();
+                    // just for fun, record how long this took
+                    start_time = System.nanoTime();
                     output.outputExcelFile();
+                    end_time = System.nanoTime();
+                    time_duration = (end_time - start_time) / 1000000.0;
+                    System.out.println("Total execution time: " + (time_duration) + "ms");
                     break;
                 default:
                     System.out.println("Invalid input.");

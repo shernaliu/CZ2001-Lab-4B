@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 /*
  * @author sherna
@@ -25,7 +24,7 @@ public class Output {
         XSSFWorkbook workbook = new XSSFWorkbook();
 
         // Create a blank sheet
-        XSSFSheet sheet = workbook.createSheet("CPU Computation Time");
+        XSSFSheet sheet = workbook.createSheet("Experiment 1");
 
         int rownum = 0;
         int cellnum = 0;
@@ -35,13 +34,12 @@ public class Output {
         // write header
         row = sheet.createRow(rownum++);
         cell = row.createCell(cellnum++);
-        cell.setCellValue("No. of cities");
+        cell.setCellValue("No. of Cities");
         cell = row.createCell(cellnum++);
-        cell.setCellValue("No. of edges");
+        cell.setCellValue("No. of Edges");
         cell = row.createCell(cellnum++);
         cell.setCellValue("Average Execution Time (ms)");
 
-        // compute average CPU time for 10 cities
         Graph graph = null;
         double start_time = 0;
         double end_time = 0;
@@ -53,20 +51,21 @@ public class Output {
         Random rand = new Random();
         int numOfSelectedEdges = 0;
 
-        // EXPERIMENT 1 - Vary the number of cities, keep number of edges constant.
-        // compute average computation time for graph size = 10, 20, 30, ..., 100 with selected number of edges = 45
-        numOfSelectedEdges = 45;
-        for (int i = 10; i <= 100; i += 10) {
+        // Sherna's note: Depending on your experiment size and computer, it may take a while.
+
+        // EXPERIMENT 1 - Vary the number of cities, fix fraction of number of edges
+        // compute average computation time for graph size = 100, 200, 300, ..., 1000 with selected number of edges
+        for (int i = 100; i <= 1000; i += 100) {
+            // calculate fraction of maximum number of edges for n cities
+            numOfSelectedEdges = (i * i - i) / 4;
+
             // reset duration_record
             duration_record = new ArrayList<>();
 
-            // generate graph of n cities 100 times to do record time 100 times for the experiment
-            for (int j = 0; j < 1000; j++) {
+            // generate graph of n cities 100 times to do record execution time 100 times for the experiment
+            for (int j = 0; j < 100; j++) {
                 graph = new Graph.Reader("data/cities.txt").read("cities", i, numOfSelectedEdges);
-
-                // TODO: WHAT RANGE?
-                // generate random number=[0,9]
-                srcIndex = 0;
+                srcIndex = 0; // randomly select index for src and dest
                 destIndex = 1;
 
                 // generate new random number for destIndex if destIndex == srcIndex (they cannot be the same)
@@ -83,7 +82,7 @@ public class Output {
                 duration_record.add(time_duration);
             }
             // compute average
-            average_duration = computeAverage(duration_record);
+            average_duration = computeAverage(duration_record, duration_record.size());
 
             // output to CSV
             cellnum = 0;
@@ -95,6 +94,88 @@ public class Output {
             cell = row.createCell(cellnum++);
             cell.setCellValue(average_duration);
         }
+
+        // EXPERIMENT 2 - Fix number of cities, vary the fraction of max edges
+        // Create a blank sheet
+        XSSFSheet sheet2 = workbook.createSheet("Experiment 2");
+
+        rownum = 0;
+        cellnum = 0;
+        row = null;
+        cell = null;
+
+        // write header
+        row = sheet2.createRow(rownum++);
+        cell = row.createCell(cellnum++);
+        cell.setCellValue("No. of Cities");
+        cell = row.createCell(cellnum++);
+        cell.setCellValue("Fraction of Max. Edges");
+        cell = row.createCell(cellnum++);
+        cell.setCellValue("No. of Edges");
+        cell = row.createCell(cellnum++);
+        cell.setCellValue("Average Execution Time (ms)");
+
+        graph = null;
+        start_time = 0;
+        end_time = 0;
+        time_duration = 0;
+        duration_record = new ArrayList<>();
+        average_duration = 0;
+        srcIndex = 0;
+        destIndex = 0;
+        rand = new Random();
+        numOfSelectedEdges = 0;
+        // Sherna's note: if u use double, when u reach 0.8, it becomes 0.79999999999 and calculation for the number of nodes is wrong :(
+        float fractionOfMaxEdges = 0.1f;
+
+        // EXPERIMENT 2 - Fix the number of cities n=1000, vary the fraction of maximum number of edges
+        // compute average computation time for graph size = 1000 with selected number of edges
+        for (int i = 0; i < 10; i += 1) {
+            // calculate fraction of maximum number of edges for n cities
+            numOfSelectedEdges = (int) ((1000 * 1000 - 1000) / 2 * fractionOfMaxEdges);
+
+            // reset duration_record
+            duration_record = new ArrayList<>();
+
+            // generate graph of n cities 100 times to do record execution time 100 times for the experiment
+            for (int j = 0; j < 100; j++) {
+                graph = new Graph.Reader("data/cities.txt").read("cities", 1000, numOfSelectedEdges);
+                srcIndex = 0; // randomly select index for src and dest
+                destIndex = 1;
+
+                // generate new random number for destIndex if destIndex == srcIndex (they cannot be the same)
+                while (destIndex == srcIndex) {
+                    destIndex = rand.nextInt(i);
+                }
+
+                // call BFS & measure Execution Time
+                start_time = System.nanoTime();
+                graph.BFS(srcIndex, destIndex, false);
+                end_time = System.nanoTime();
+                time_duration = (end_time - start_time) / 1000000.0;
+                // add to time_duration to duration_record
+                duration_record.add(time_duration);
+            }
+            // compute average
+            average_duration = computeAverage(duration_record, duration_record.size());
+
+            // output to CSV
+            cellnum = 0;
+            row = sheet2.createRow(rownum++);
+            cell = row.createCell(cellnum++);
+            cell.setCellValue(1000); // graph size
+            cell = row.createCell(cellnum++);
+            cell.setCellValue(String.format("%.1f", fractionOfMaxEdges));
+            cell = row.createCell(cellnum++);
+            cell.setCellValue(numOfSelectedEdges);
+            cell = row.createCell(cellnum++);
+            cell.setCellValue(average_duration);
+
+            // increment fractionOfMaxEdges by 0.1
+            fractionOfMaxEdges += 0.1;
+        }
+
+
         try {
             FileOutputStream out = new FileOutputStream(new File("data/output-" + graph.getFileName() + ".xlsx"));
             workbook.write(out);
@@ -105,12 +186,12 @@ public class Output {
         }
     }
 
-    public double computeAverage(List<Double> records) {
+    public double computeAverage(List<Double> records, int recordsSize) {
         double ans = 0;
         for (Double record : records) {
             ans += record;
         }
-        return ans / 1000.0;
+        return ans / recordsSize;
     }
 
 }
