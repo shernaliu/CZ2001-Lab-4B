@@ -14,7 +14,7 @@ public class Graph {
     private int e; // number of edges/fights
     private List<String> cityList; // list of available nodes/cities
     private ArrayList<Integer>[] vertexList;
-    private int numFlightsTaken = 0;
+    private int noFlights = 0;
 
     /**
      * Constructor
@@ -49,8 +49,8 @@ public class Graph {
      *
      * @return number of flights taken
      */
-    public int getNumFlightsTaken() {
-        return this.numFlightsTaken;
+    public int getNoFlights() {
+        return this.noFlights;
     }
 
 
@@ -174,8 +174,8 @@ public class Graph {
     public void BFS(int srcCity, int destCity) {
         boolean isShortestPath = false; // set to true if a shortest path is found
         boolean visitedCities[] = new boolean[n]; // all visited cities are initially set to false as its not visited yet
-        LinkedList<Integer> queue = new LinkedList<Integer>();
-        Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>(); // trace a shortest path to the source. <adjVertex, currentCity>
+        LinkedList<Integer> queue = new LinkedList<>();
+        Map<Integer, Integer> previousCities = new HashMap<>(); // trace a shortest path to the source. <adjVertex, currentCity>
         visitedCities[srcCity] = true; // visit & mark srcCity as true and add to the queue
         queue.add(srcCity);
         int currentCity = srcCity; // used to iterate thru while loop
@@ -212,10 +212,10 @@ public class Graph {
             }
             Collections.reverse(pathToTrace);
             System.out.println("Shortest path flight route: ");
-            numFlightsTaken = 0;
+            noFlights = 0;
             for (Integer cityIndex : pathToTrace) {
                 System.out.format("%2d : %s\n", cityIndex, cityList.get(cityIndex));
-                numFlightsTaken++;
+                noFlights++;
             }
         }
     }
@@ -229,8 +229,8 @@ public class Graph {
     public void BFS(int srcCity, int destCity, boolean printResult) {
         boolean isShortestPath = false;
         boolean visitedCities[] = new boolean[n];
-        LinkedList<Integer> queue = new LinkedList<Integer>();
-        Map<Integer, Integer> previousCities = new HashMap<Integer, Integer>();
+        LinkedList<Integer> queue = new LinkedList<>();
+        Map<Integer, Integer> previousCities = new HashMap<>();
         visitedCities[srcCity] = true;
         queue.add(srcCity);
         int currentCity = srcCity;
@@ -240,9 +240,9 @@ public class Graph {
                 break;
             }
             currentCity = queue.poll();
-            Iterator<Integer> iter = vertexList[currentCity].listIterator();
-            while (iter.hasNext()) {
-                Integer adjCity = iter.next();
+            Iterator<Integer> iterator = vertexList[currentCity].listIterator();
+            while (iterator.hasNext()) {
+                Integer adjCity = iterator.next();
                 if (visitedCities[adjCity] == false) {
                     visitedCities[adjCity] = true;
                     queue.add(adjCity);
@@ -263,9 +263,9 @@ public class Graph {
                 cityToTrace = previousCities.get(cityToTrace);
             }
             Collections.reverse(pathToTrace);
-            numFlightsTaken = 0;
+            noFlights = 0;
             for (Integer cityIndex : pathToTrace) {
-                numFlightsTaken++;
+                noFlights++;
             }
         }
     }

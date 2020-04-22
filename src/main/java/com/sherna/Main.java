@@ -95,7 +95,7 @@ public class Main {
 
                     System.out.println("Total execution time: " + (time_duration) + "ms");
                     System.out.println("Number of Cities: " + numOfCities);
-                    System.out.println("Number of Flights taken to fly from source to destination: " + (g.getNumFlightsTaken() - 1));
+                    System.out.println("Number of Flights taken to fly from source to destination: " + (g.getNoFlights() - 1));
                     break;
                 case 5:
                     System.out.println("(5) - Output Excel File");
