@@ -36,6 +36,8 @@ public class Output {
         cell = row.createCell(cellnum++);
         cell.setCellValue("No. of Cities");
         cell = row.createCell(cellnum++);
+        cell.setCellValue("Fraction of Max. Edges");
+        cell = row.createCell(cellnum++);
         cell.setCellValue("No. of Edges");
         cell = row.createCell(cellnum++);
         cell.setCellValue("Average Execution Time (ms)");
