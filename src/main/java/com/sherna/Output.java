@@ -37,81 +37,53 @@ public class Output {
         cell = row.createCell(cellnum++);
         cell.setCellValue("No. of cities");
         cell = row.createCell(cellnum++);
-        cell.setCellValue("1-Stop Flight Average Execution Time (ms)");
+        cell.setCellValue("No. of edges");
         cell = row.createCell(cellnum++);
-        cell.setCellValue("2-Stops Flight Average Execution Time (ms)");
+        cell.setCellValue("Average Execution Time (ms)");
 
         // compute average CPU time for 10 cities
         Graph graph = null;
         double start_time = 0;
         double end_time = 0;
         double time_duration = 0;
-        List<Double> duration_record_1_flight = new ArrayList<>();
-        List<Double> duration_record_2_flights = new ArrayList<>();
-        int noFlightsTaken = 0;
-        double average_1_flight = 0;
-        double average_2_flights = 0;
+        List<Double> duration_record = new ArrayList<>();
+        double average_duration = 0;
         int srcIndex = 0;
         int destIndex = 0;
         Random rand = new Random();
+        int numOfSelectedEdges = 0;
 
-        // compute average computation time for graph size = 10, 20, 30, ..., 100
+        // EXPERIMENT 1 - Vary the number of cities, keep number of edges constant.
+        // compute average computation time for graph size = 10, 20, 30, ..., 100 with selected number of edges = 45
+        numOfSelectedEdges = 45;
         for (int i = 10; i <= 100; i += 10) {
-            // init a graph of n cities
-            graph = new Graph.Reader("data/cities.txt").read("cities", i, 2);
-            // reset record
-            duration_record_1_flight = new ArrayList<>();
-            duration_record_2_flights = new ArrayList<>();
+            // reset duration_record
+            duration_record = new ArrayList<>();
 
-            // as long as both record's size is not 5, repeat
-            while (duration_record_1_flight.size() < 5 || duration_record_2_flights.size() < 5) {
-                // generate random number=[0,10]
-                srcIndex = rand.nextInt(10);
-                destIndex = rand.nextInt(10);
+            // generate graph of n cities 100 times to do record time 100 times for the experiment
+            for (int j = 0; j < 1000; j++) {
+                graph = new Graph.Reader("data/cities.txt").read("cities", i, numOfSelectedEdges);
 
-                // generate new random number for destIndex if destIndex == srcIndex bc they cannot be the same.
+                // TODO: WHAT RANGE?
+                // generate random number=[0,9]
+                srcIndex = 0;
+                destIndex = 1;
+
+                // generate new random number for destIndex if destIndex == srcIndex (they cannot be the same)
                 while (destIndex == srcIndex) {
-                    destIndex = rand.nextInt(11);
+                    destIndex = rand.nextInt(i);
                 }
 
-                // call BFS to see if noOfFlightsTaken is 1
+                // call BFS & measure Execution Time
+                start_time = System.nanoTime();
                 graph.BFS(srcIndex, destIndex, false);
-                noFlightsTaken = graph.getNumFlightsTaken() - 1;
-
-                if (noFlightsTaken == 1) {
-                    // record 5 times
-                    while (duration_record_1_flight.size() < 5) {
-                        start_time = System.nanoTime();
-                        graph.BFS(srcIndex, destIndex, false);
-                        end_time = System.nanoTime();
-                        time_duration = (end_time - start_time) / 1000000.0;
-
-                        // do this for no. of flights = 1
-                        if (duration_record_1_flight.size() < 5) {
-                            duration_record_1_flight.add(time_duration);
-                        }
-                    }
-                } else if (noFlightsTaken == 2) {
-                    // record 5 times
-                    while (duration_record_2_flights.size() < 5) {
-                        start_time = System.nanoTime();
-                        graph.BFS(srcIndex, destIndex, false);
-                        end_time = System.nanoTime();
-                        time_duration = (end_time - start_time) / 1000000.0;
-
-                        // do this for no. of flights = 2
-                        if (duration_record_2_flights.size() < 5) {
-                            duration_record_2_flights.add(time_duration);
-                        }
-                    }
-                } else {
-
-                }
+                end_time = System.nanoTime();
+                time_duration = (end_time - start_time) / 1000000.0;
+                // add to time_duration to duration_record
+                duration_record.add(time_duration);
             }
-
             // compute average
-            average_1_flight = computeAverage(duration_record_1_flight);
-            average_2_flights = computeAverage(duration_record_2_flights);
+            average_duration = computeAverage(duration_record);
 
             // output to CSV
             cellnum = 0;
@@ -119,9 +91,9 @@ public class Output {
             cell = row.createCell(cellnum++);
             cell.setCellValue(i); // graph size
             cell = row.createCell(cellnum++);
-            cell.setCellValue(average_1_flight);
+            cell.setCellValue(numOfSelectedEdges);
             cell = row.createCell(cellnum++);
-            cell.setCellValue(average_2_flights);
+            cell.setCellValue(average_duration);
         }
         try {
             FileOutputStream out = new FileOutputStream(new File("data/output-" + graph.getFileName() + ".xlsx"));
@@ -138,7 +110,7 @@ public class Output {
         for (Double record : records) {
             ans += record;
         }
-        return ans / 5.0;
+        return ans / 1000.0;
     }
 
 }

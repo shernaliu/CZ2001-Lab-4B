@@ -112,7 +112,7 @@ public class Graph {
                 M[j][i] = M[i][j];
             }
         }
-        printMatrix(M); // debug
+//        printMatrix(M); // debug
         return M;
     }
 
