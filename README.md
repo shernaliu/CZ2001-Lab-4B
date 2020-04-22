@@ -77,3 +77,7 @@ There are 3 repositories created for both projects of Lab 4.
 2. [CZ2001-Lab-4B - Application of BFS to Flight Scheduling](https://github.com/shernaliu/CZ2001-Lab-4B) :point_left: You are here!
 
 3. [CZ2001-Lab-4B-Graph - Visualization of a graph using Python Jupyter notebook](https://github.com/shernaliu/CZ2001-Lab-4B-Graph)
+
+## Report document
+
+[Sherna is here to rescue you](https://drive.google.com/open?id=1J6wEOsiGaQJOOd6A5HzmvgjXvA68P_O9)
