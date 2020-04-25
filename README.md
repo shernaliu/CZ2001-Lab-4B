@@ -80,4 +80,4 @@ There are 3 repositories created for both projects of Lab 4.
 
 ## Report document
 
-[Sherna is here to rescue you](https://drive.google.com/open?id=1J6wEOsiGaQJOOd6A5HzmvgjXvA68P_O9)
+[Sherna](https://drive.google.com/open?id=1J6wEOsiGaQJOOd6A5HzmvgjXvA68P_O9)
